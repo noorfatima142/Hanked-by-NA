@@ -45,38 +45,42 @@
 <div class="chain-divider" data-links="20"></div>
 
 <!-- Replace YOUR_BASIN_ID with your actual ID from Basin -->
-<form action="https://usebasin.com/f/041fa2e926ac" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
-    
-    <p class="label" style="margin-bottom: 5px; font-weight: 600;">REFERENCE PICTURE (REQUIRED) *</p>
-    
-    <label style="display: block; border: 2px dashed #a67c7c; padding: 25px; text-align: center; background: #fafafa; border-radius: 12px; cursor: pointer; position: relative;">
-        <img src="assets/paperclip-icon.png" alt="clip" style="width: 25px; opacity: 0.5; margin-bottom: 10px;">
-        <p id="file-name-display" style="font-size: 14px; color: #666; margin: 0;">Click to upload reference photo</p>
+<div style="max-width: 450px; margin: 0 auto;"> <!-- This centers and narrows the form -->
+    <form id="custom-order-form" action="https://usebasin.com/f/041fa2e926ac"" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 10px;">
         
-        <!-- Basin needs name="file" or name="attachment" -->
-        <input type="file" id="file-input" name="file" accept="image/*" required 
-               style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;" 
-               onchange="showFileName()">
-    </label>
+        <p class="label" style="margin: 0; font-weight: 600; font-size: 14px;">REFERENCE PICTURE *</p>
+        <label style="display: block; border: 2px dashed #a67c7c; padding: 15px; text-align: center; background: #fafafa; border-radius: 10px; cursor: pointer; position: relative;">
+            <p id="file-name-display" style="font-size: 13px; color: #666; margin: 0;">Click to upload photo</p>
+            <input type="file" id="file-input" name="file" accept="image/*" required 
+                   style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;" 
+                   onchange="showFileName()">
+        </label>
 
-    <p class="label" style="margin-bottom: 5px; font-weight: 600;">DESCRIPTION</p>
-    <textarea name="description" placeholder="Describe your idea here..." required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; height: 100px; box-sizing: border-box;"></textarea>
+        <p class="label" style="margin: 0; font-weight: 600; font-size: 14px;">DESCRIPTION</p>
+        <textarea name="description" placeholder="Describe your idea..." required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; height: 80px; box-sizing: border-box;"></textarea>
 
-    <p class="label" style="margin-bottom: 5px; font-weight: 600;">YOUR NAME *</p>
-    <input type="text" name="name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+        <div style="display: flex; gap: 10px;"> <!-- Put Name and Phone side-by-side to save height -->
+            <div style="flex: 1;">
+                <p class="label" style="margin: 0; font-weight: 600; font-size: 14px;">NAME *</p>
+                <input type="text" name="name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+            </div>
+            <div style="flex: 1;">
+                <p class="label" style="margin: 0; font-weight: 600; font-size: 14px;">PHONE *</p>
+                <input type="tel" name="phone" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+            </div>
+        </div>
 
-    <p class="label" style="margin-bottom: 5px; font-weight: 600;">PHONE NUMBER (WHATSAPP) *</p>
-    <input type="tel" name="phone" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+        <button type="submit" id="submit-btn" style="margin-top: 5px; width: 100%; background-color: #a67c7c; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+            SUBMIT REQUEST
+        </button>
+    </form>
 
-    <button type="submit" style="margin-top: 10px; width: 100%; background-color: #a67c7c; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">
-        SUBMIT REQUEST
-    </button>
-</form>
-<!-- This MUST be on your page for the script below to work -->
-<div id="thank-you-message" style="display:none; text-align:center; padding: 40px; background: #fff; border-radius: 15px;">
-    <h2 style="color: #a67c7c;">Order Received! 🧶</h2>
-    <p>We will contact you on WhatsApp shortly!</p>
-    <button onclick="location.reload()" style="background: none; border: 1px solid #a67c7c; color: #a67c7c; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Send another request</button>
+    <!-- YOUR CUSTOM THANK YOU MESSAGE (Hidden by default) -->
+    <div id="thank-you-message" style="display:none; text-align:center; padding: 30px; background: #fff; border: 1px solid #eee; border-radius: 15px; margin-top: 20px;">
+        <h2 style="color: #a67c7c; margin-top: 0;">Order Received! 🧶</h2>
+        <p>We'll reach out on WhatsApp shortly.</p>
+        <button onclick="location.reload()" style="background: none; border: 1px solid #a67c7c; color: #a67c7c; padding: 5px 15px; border-radius: 5px; cursor: pointer;">Send another</button>
+    </div>
 </div>
 <!-- FOOTER -->
 <footer class="main-footer">
