@@ -156,6 +156,12 @@ button{font-family:var(--font-body);cursor:pointer;border:none;background:none;}
     font-size: 1.3rem;
     font-weight: 600;
   }
+  .nav-toggle { 
+    display: block !important; 
+    position: relative; 
+    z-index: 101; /* This ensures it stays on top of the blue background */
+    color: #2D3A47 !important; /* This makes the lines dark navy so you can see them */
+  }
 }
 /* ===== Hero ===== */
 .hero {
