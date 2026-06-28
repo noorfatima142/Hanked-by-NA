@@ -44,40 +44,27 @@
 
 <div class="chain-divider" data-links="20"></div>
 
-<div id="form-container" style="max-width: 500px; margin: 40px auto; padding: 20px;">
-    <!-- Web3Forms Version -->
-<form action="https://api.web3forms.com/submit" method="POST" enctype="multipart/form-data">
-
-    <!-- 1. YOUR ACCESS KEY (PASTE YOUR KEY HERE) -->
-    <input type="hidden" name="access_key" value="aafd945b-30ca-4a9e-b20f-f26950ed4d38">
-    <!-- 2. OPTIONAL: Where to go after they click submit (redirect back to your site) -->
-    <!-- <input type="hidden" name="redirect" value="https://yourwebsite.com/custom-order.html"> -->
+    <!-- Replace YOUR_FORM_ID with your actual ID from FormBold -->
+<form action="https://formbold.com/s/YOUR_FORM_ID" method="POST" enctype="multipart/form-data">
 
     <p class="label">REFERENCE PICTURE (REQUIRED) *</p>
-    <div class="upload-box" onclick="document.getElementById('file-input').click()" style="border: 2px dashed #a67c7c; padding: 30px; text-align: center; background: #fafafa; border-radius: 12px; cursor: pointer;">
-        <img src="assets/paperclip-icon.png" alt="clip" style="width: 25px; opacity: 0.5; margin-bottom: 10px;">
-        <p id="file-name-display" style="font-size: 14px; color: #666;">Click or drag a photo here</p>
-        
-        <!-- IMPORTANT: The 'name' must be "attachment" for Web3Forms to see the image -->
-        <input type="file" id="file-input" name="attachment" accept="image/*" required style="display:none;" onchange="showFileName()">
+    <div class="upload-box" onclick="document.getElementById('file-input').click()">
+        <p id="file-name-display">Click to upload photo</p>
+        <!-- The name MUST be "file" for many of these services -->
+        <input type="file" id="file-input" name="file" accept="image/*" required style="display:none;" onchange="showFileName()">
     </div>
 
     <p class="label">DESCRIPTION</p>
-    <textarea name="message" placeholder="Describe your idea here..." required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; height: 100px; margin-top:5px;"></textarea>
+    <textarea name="description" required></textarea>
 
     <p class="label">YOUR NAME *</p>
-    <input type="text" name="name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top:5px;">
+    <input type="text" name="name" required>
 
-    <p class="label">PHONE NUMBER (WHATSAPP PREFERRED) *</p>
-    <input type="tel" name="phone" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top:5px;">
+    <p class="label">PHONE NUMBER *</p>
+    <input type="tel" name="phone" required>
 
-    <!-- This helps prevent spam -->
-    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-
-    <button type="submit" style="margin-top: 20px; width: 100%; background-color: #a67c7c; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">
-        SUBMIT REQUEST
-    </button>
-    </form>
+    <button type="submit">SUBMIT REQUEST</button>
+</form>  
     <!-- This message is hidden at first -->
       <div id="thank-you-message" style="display:none; text-align:center; padding: 40px; background: #fff; border-radius: 15px;">
         <h2 style="color: #a67c7c;">Order Received! 🧶</h2>
