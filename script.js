@@ -651,56 +651,51 @@ function calculateShipping() {
     const grandTotal = subtotal + shippingCost;
     totalEl.textContent = "Rs. " + grandTotal.toLocaleString();
 }
-const customForm = document.getElementById('custom-order-form');
-const thankYou = document.getElementById('thank-you-message');
+const orderForm = document.getElementById('custom-order-form');
+const thankYouMsg = document.getElementById('thank-you-message');
 
-if (customForm) {
-    customForm.addEventListener('submit', function (e) {
-        e.preventDefault(); // Stop redirect
+if (orderForm) {
+    orderForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // This stops the page from redirecting!
 
         const btn = document.getElementById('submit-btn');
         btn.innerText = "SENDING...";
         btn.disabled = true;
 
-        const formData = new FormData(customForm);
+        const formData = new FormData(orderForm);
 
-        // DEBUG: This line prints what is being sent in your console (F12)
-        // You should see "file" in the list if you uploaded an image
-        for (var pair of formData.entries()) { console.log(pair[0]+ ': ' + pair[1]); }
-
-        fetch(customForm.action, {
+        fetch(orderForm.action, {
             method: 'POST',
             body: formData,
             headers: {
                 'Accept': 'application/json'
-                // NOTE: DO NOT ADD 'Content-Type' here!
             }
         })
         .then(response => {
             if (response.ok) {
-                customForm.style.display = 'none';
-                thankYou.style.display = 'block';
+                // Hide form and show your thank you message
+                orderForm.style.display = 'none';
+                thankYouMsg.style.display = 'block';
             } else {
-                alert("Submission failed. Try again.");
+                alert("Something went wrong. Please try again.");
                 btn.innerText = "SUBMIT REQUEST";
                 btn.disabled = false;
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert("Error sending request.");
+            alert("Error connecting to server.");
             btn.innerText = "SUBMIT REQUEST";
             btn.disabled = false;
         });
     });
 }
 
+// Keep your filename function too
 function showFileName() {
     const input = document.getElementById('file-input');
     const display = document.getElementById('file-name-display');
     if (input.files.length > 0) {
         display.innerText = "Selected: " + input.files[0].name;
         display.style.color = "#a67c7c";
-        display.style.fontWeight = "bold";
     }
 }
