@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HANKED — Warm & Woven</title>
+    <!-- Font Link -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Transition Overlay -->
+<div class="slide-transition" id="slide-transition">
+    <div class="slide-panel"></div><div class="slide-panel"></div><div class="slide-panel"></div><div class="slide-panel"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+    <a href="index.html" class="nav-logo">
+        <span class="nav-logo-badge"><img src="assets/logo.jpg" alt="HANKED logo"></span>
+        <span class="tag woven-text">warm & woven</span>
+    </a>
+    <div class="nav-links">
+        <a href="index.html" class="active">Collection</a>
+        <a href="story.html">Our Story</a>
+        <a href="supplies.html">Supplies</a>
+        <a href="custom-order.html">Custom Order</a>
+        <a href="reviews.html" class="nav-item">REVIEWS</a>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px;">
+        <button class="cart-btn" onclick="openCart()">Cart <span class="cart-count">0</span></button>
+        <button class="nav-toggle">&#9776;</button>
+    </div>
+</nav>
+    
+<!-- HERO SECTION -->
+<header class="hero">
+    <div class="hero-content">
+        <span class="classic-detail">a bundle of yarn, a bundle of love</span>
+        <h1 class="hanked-yarn-title">HANKED</h1>
+        <p class="business-meaning">--- Curated Just for You ---</p>
+        <p class="classic-detail">Where every loop is made slow, soft & with love.</p>
+        <div class="hero-actions">
+            <a href="#collection" class="btn btn-primary">Shop the Collection</a>
+            <a href="story.html" class="btn btn-outline">Our Story</a>
+        </div>
+    </div>
+</header>
+
+<!-- COLLECTION SECTION -->
+<section class="section" id="collection">
+    <div class="section-head reveal">
+        <span class="eyebrow script">the collection</span>
+        <h2>Made by hand, made for you</h2>
+        <p>Bags, charms, covers, and more — every piece is stitched one chain at a time.</p>
+    </div>
+    <div class="filters reveal">
+        <button class="filter-btn active" data-filter="all">all</button>
+        <button class="filter-btn" data-filter="bags">bags</button>
+        <button class="filter-btn" data-filter="flowers">flowers</button>
+        <button class="filter-btn" data-filter="charms">charms</button>
+        <button class="filter-btn" data-filter="accessory">accessory</button>
+        <button class="filter-btn" data-filter="wearables">wearables</button>
+        <button class="filter-btn" data-filter="characters">characters</button>
+    </div>
+
+    <div class="grid" id="product-grid">
+        <!-- Products load here via script.js -->
+    </div>
+</section>
+
+<!-- WHY HANKED SECTION -->
+<section class="section" style="background:var(--gradient-soft);">
+    <div class="section-head reveal">
+        <span class="eyebrow script">why HANKED?</span>
+        <h2>Slow-made, stitch by stitch</h2>
+    </div>
+    <div class="values-grid">
+        <div class="value-card reveal">
+            <div class="icon">🧶</div>
+            <h3>100% Handmade</h3>
+            <p style="color:#6b4453; margin-top:8px; font-size:0.9rem;">No machines, just hooks, yarn, and patience.</p>
+        </div>
+        <div class="value-card reveal">
+            <div class="icon">🎨</div>
+            <h3>Made-to-order</h3>
+            <p style="color:#6b4453; margin-top:8px; font-size:0.9rem;">Pick your colours — every hank tells your story.</p>
+        </div>
+        <div class="value-card reveal">
+            <div class="icon">💌</div>
+            <h3>Small batch</h3>
+            <p style="color:#6b4453; margin-top:8px; font-size:0.9rem;">By two hands, with care — not mass-produced.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="main-footer">
+    <div class="footer-grid">
+        <!-- Column 1: Brand Info -->
+        <div class="footer-col brand-info">
+            <div class="footer-logo">HANKED</div>
+            <span class="footer-tag">warm & woven</span>
+            <p>A bundle of yarn — handmade by Noor & Amna. We turn strings into stories, one loop at a time.</p>
+        </div>
+
+        <!-- Column 2: Quick Links -->
+        <div class="footer-col">
+            <h4>Shop</h4>
+            <ul>
+                <li><a href="index.html">Collection</a></li>
+                <li><a href="supplies.html">Supplies</a></li>
+                <li><a href="custom-order.html">Custom Order</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 3: Customer Care (POLICIES) -->
+        <div class="footer-col">
+            <h4>Information</h4>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="openPolicy('shipping')">Shipping Policy</a></li>
+                <li><a href="javascript:void(0)" onclick="openPolicy('maker')">Maker Policy</a></li>
+                <li><a href="story.html">Our Story</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 4: Contact -->
+        <div class="footer-col">
+            <h4>Reach Us</h4>
+            <ul>
+                <li><a href="mailto:hankedbyNA@gmail.com">hankedbyNA@gmail.com</a></li>
+                <li><a href="https://instagram.com/your-handle" target="_blank">Instagram</a></li>
+                <li><a href="https://wa.me/your-number" target="_blank">WhatsApp</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>© 2026 HANKED — Hand-crocheted with love.</p>
+    </div>
+</footer>
+
+<!-- POLICY MODAL (The Popup) -->
+<div class="modal-overlay" id="policy-modal">
+    <div class="modal policy-content">
+        <button class="modal-close" onclick="closePolicy()">&times;</button>
+        <div id="policy-text">
+            <!-- Dynamic content loads here -->
+        </div>
+    </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="product-modal-overlay" id="product-modal">
+    <div class="product-modal">
+        <button class="modal-close" onclick="closeProductModal()">&times;</button>
+        <div class="product-modal-grid">
+            <div class="product-modal-img">
+                <img id="modal-img" src="" alt="Product Image">
+            </div>
+            <div class="product-modal-info">
+                <span id="modal-cat" class="cat"></span>
+                <h2 id="modal-name"></h2>
+                <p id="modal-price" class="price"></p>
+                <p id="modal-desc" class="desc"></p>
+                <div class="qty-selector">
+                    <label>Quantity</label>
+                    <div class="qty-controls">
+                        <button onclick="changeModalQty(-1)">−</button>
+                        <input type="number" id="modal-qty" value="1" min="1">
+                        <button onclick="changeModalQty(1)">+</button>
+                    </div>
+                </div>
+                <button class="submit-btn" id="modal-add-btn">Add to Bag</button>
+            </div>
+        </div>
+    </div>
+</div> <!-- Fixed missing closing div here -->
+
+<!-- CART DRAWER -->
+<div class="overlay" id="cart-overlay"></div>
+<div class="drawer" id="cart-drawer">
+    <div class="drawer-head">
+        <h3>Your Cart</h3>
+        <button class="close-btn" onclick="closeCart()">&times;</button>
+    </div>
+    <div class="drawer-items" id="drawer-items">
+        <!-- Cart items load here -->
+    </div>
+    <div class="drawer-foot">
+    <div class="subtotal-row">
+        <span>Subtotal</span>
+        <span id="drawer-subtotal">Rs. 0</span>
+    </div>
+    
+    <!-- Professional Button Section -->
+    <div class="cart-drawer-buttons">
+        <!-- Button 1: View Cart -->
+         <button class="view-cart-btn" onclick="viewBag()">VIEW BAG</button>
+        
+        <!-- Button 2: Proceed (Already in your code, just styled better) -->
+        <button class="submit-btn" onclick="openCheckout()">PROCEED TO CHECKOUT</button>
+    </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkout-modal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeCheckout()">&times;</button>
+
+        <div id="checkout-step-form">
+            <h3>Confirm your order</h3>
+            <p class="sub">Tell us where to send your hand-crocheted goodies.</p>
+            <form id="checkout-form">
+                <div class="form-group"><label>Full name *</label><input type="text" name="name" required></div>
+                <div class="form-group"><label>Email *</label><input type="email" name="email" required></div>
+                <div class="form-group"><label>Phone number *</label><input type="tel" name="phone" required></div>
+                <div class="form-group"><label>Delivery address *</label><textarea name="address" rows="3" required></textarea></div>
+                <div class="form-group"><label>Notes (colour preference, etc.)</label><textarea name="notes" rows="2"></textarea></div>
+                <button type="submit" class="submit-btn">Place order</button>
+            </form>
+        </div>
+
+        <div id="checkout-step-success" style="display:none;">
+            <div class="success-box">
+                <h3>Order placed!</h3>
+                <p class="sub">Thank you for choosing HANKED. We'll reach out shortly to confirm details.</p>
+                <div class="order-id-pill" id="order-id-display"></div>
+                <button class="submit-btn" onclick="closeCheckout()">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

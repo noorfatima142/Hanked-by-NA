@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — HANKED</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="checkout-page">
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <span class="nav-logo-badge"><img src="assets/logo.jpg" alt="Logo"></span>
+    <span class="woven-text">warm & woven</span>
+  </a>
+</nav>
+
+<div class="checkout-container">
+    <!-- LEFT SIDE: SHIPPING FORM -->
+    <div class="checkout-form-section" id="form-container">
+        <h2>Shipping Details</h2>
+        <p>Please enter your details below to confirm your order.</p>
+        
+        <form id="final-checkout-form">
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" name="name" required placeholder="John Doe">
+            </div>
+            <div class="form-row" style="display:flex; gap:15px;">
+                <div class="form-group" style="flex:1;"><label>Email *</label><input type="email" name="email" required placeholder="your@email.com"></div>
+                <div class="form-group" style="flex:1;"><label>Phone *</label><input type="tel" name="phone" required placeholder="03xx-xxxxxxx"></div>
+            </div>
+            <div class="form-group">
+                <label>Complete Address *</label>
+                <textarea name="address" rows="3" required placeholder="House #, Street, Area, City..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Nearest Landmark *</label>
+                <input type="text" name="landmark" required placeholder="e.g. Near City Mall">
+            </div>
+            <div class="form-group">
+                <label>City *</label>
+                <input type="text" name="city" id="city-input" placeholder="e.g. Karachi" required oninput="calculateShipping()">
+            </div>
+            <button type="submit" class="place-order-btn" id="submit-btn">PLACE ORDER</button>
+        </form>
+    </div>
+
+    <!-- RIGHT SIDE: BAG SUMMARY -->
+    <div class="checkout-summary-section">
+        <h2>Your Bag</h2>
+        <div id="checkout-items-list">
+            <!-- Items from Cart show here -->
+            <p style="text-align:center; padding: 20px;">Loading your bag... 🧶</p>
+        </div>
+        <div class="checkout-total">
+            <div class="total-row"><span>Subtotal</span><span id="summary-subtotal">Rs. 0</span></div>
+    <!-- SHIPPING ROW -->
+            <div class="total-row"><span>Shipping</span><span id="summary-shipping">Rs. 0</span></div>
+            <div class="total-row grand"><span>Total</span><span id="summary-total">Rs. 0</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS MESSAGE (Hidden by default) -->
+<div id="success-screen" class="success-overlay" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:9999; justify-content:center; align-items:center; text-align:center;">
+    <div class="success-card" style="padding: 40px; background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
+        <div class="success-icon" style="font-size: 50px; margin-bottom: 20px;">🧶</div>
+        <h1 style="font-family: 'Playfair Display', serif; color: #2D3A47;">Order Placed!</h1>
+        <p style="color: #666; margin-bottom: 5px;">Thank you for trusting <strong>HANKED</strong> with your order.</p>
+        <p style="color: #666; margin-bottom: 5px;">We will contact you on your number for discussing further details.<strong>Very</strong>Soon!</p>
+        <p style="color: #666;">Your Order ID is: <strong id="order-id-label" style="color: #E29578;"></strong></p>
+        <button onclick="window.location.href='index.html'" class="place-order-btn" style="margin-top:20px; width: auto; padding: 12px 40px;">Continue Shopping</button>
+    </div>
+</div>
+<!-- EmailJS SDK -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      // Replace "YOUR_PUBLIC_KEY" with your actual Public Key from EmailJS Account page
+      emailjs.init("PJJbYRpacLs5JwfmH"); 
+   })();
+</script>
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+
+<script>
+/** 
+ * CHECKOUT PAGE LOGIC 
+ * This script runs specifically for the checkout process
+ */
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Instantly check if we have products in cache to avoid "Empty Bag" on refresh
+    const cachedData = localStorage.getItem('hanked_cached_products');
+    if (cachedData) {
+        window.storeItems = JSON.parse(cachedData);
+        renderCheckoutSummary();
+    }
+
+    // 2. Sync with live Supabase data (updates prices or names if they changed)
+    try {
+        await getCollection(); 
+        renderCheckoutSummary();
+    } catch (err) {
+        console.warn("Using cached data only. Supabase sync failed.");
+    }
+    
+    // 3. Attach form listener
+    const form = document.getElementById('final-checkout-form');
+    if(form) form.addEventListener('submit', processOrder);
+});
+
+// RENDER SUMMARY
+function renderCheckoutSummary() {
+    const list = document.getElementById('checkout-items-list');
+    const items = Cart.get(); // From script.js
+    
+    if(!items || items.length === 0) {
+        list.innerHTML = `
+            <div style="text-align:center; padding:30px;">
+                <p>Your bag is empty 🧶</p>
+                <a href="index.html" style="color:#E29578; text-decoration:underline;">Go back to collection</a>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = items.map(i => {
+        // Find product details from window.storeItems (populated via script.js)
+        const p = window.storeItems.find(item => item.id == i.id);
+        if (!p) return ""; 
+        
+        return `
+            <div class="checkout-item" style="display: flex; gap: 15px; margin-bottom: 20px; align-items: center; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;">
+                <div style="position: relative;">
+                    <img src="${p.image_url}" style="width:75px; height:75px; object-fit:cover; border-radius:12px; background:#f9f9f9;" onerror="this.src='assets/logo.jpg'">
+                    <span style="position:absolute; top:-10px; right:-10px; background:#2D3A47; color:white; width:22px; height:22px; border-radius:50%; font-size:12px; display:flex; justify-content:center; align-items:center;">${i.qty}</span>
+                </div>
+                <div class="info" style="flex: 1;">
+                    <h4 style="margin:0; font-family: 'Playfair Display', serif; font-size: 16px;">${p.name}</h4>
+                    <p style="margin:5px 0; color:#888; font-size: 14px;">Rs. ${p.price.toLocaleString()} each</p>
+                </div>
+                <div style="font-weight: 600; color: #2D3A47;">
+                    Rs. ${(p.price * i.qty).toLocaleString()}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    const total = Cart.totalPrice();
+    document.getElementById('summary-subtotal').textContent = "Rs. " + total.toLocaleString();
+    document.getElementById('summary-total').textContent = "Rs. " + total.toLocaleString();
+}
+async function processOrder(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "PROCESSING...";
+
+    const cartItems = Cart.get();
+    if(cartItems.length === 0) {
+        alert("Bag is empty!");
+        btn.disabled = false;
+        btn.textContent = originalText;
+        return;
+    }
+
+    // 1. CALCULATIONS
+    const orderId = "HKD-" + Date.now().toString().slice(-6);
+    const subtotal = Cart.totalPrice();
+    const cityValue = e.target.city.value.trim().toLowerCase();
+    const shippingCost = (cityValue === "karachi") ? 200 : 350;
+    const grandTotal = subtotal + shippingCost;
+
+    // 2. BUILD HTML FOR EMAIL (IMAGES)
+    const itemsHTML = cartItems.map(i => {
+        const p = window.storeItems.find(item => item.id == i.id);
+        if (!p) return "";
+        let imgUrl = p.image_url;
+        if (!imgUrl.startsWith('http')) {
+            imgUrl = window.location.origin + '/' + imgUrl;
+        }
+        return `
+            <div style="display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #333;">
+                <img src="${imgUrl}" width="50" height="50" style="border-radius: 6px; object-fit: cover; margin-right: 15px; background: #eee;">
+                <div style="flex: 1;">
+                    <p style="margin: 0; font-weight: bold; font-size: 14px; color: #ffffff;">${p.name}</p>
+                    <p style="margin: 3px 0 0; font-size: 12px; color: #aaaaaa;">Qty: ${i.qty} x Rs. ${p.price}</p>
+                </div>
+                <div style="font-weight: bold; color: #ffffff;">Rs. ${p.price * i.qty}</div>
+            </div>`;
+    }).join("");
+
+    // 3. DATA FOR SUPABASE (Only columns that actually exist in your DB)
+    const dbData = {
+        order_id: orderId,
+        customer_name: e.target.name.value,
+        email: e.target.email.value,
+        phone: e.target.phone.value,
+        address: e.target.address.value,
+        landmark: e.target.landmark.value,
+        city: e.target.city.value, // Your DB has this
+        items_summary: cartItems.map(i => {
+            const p = window.storeItems.find(item => item.id == i.id);
+            return p ? `${p.name} (x${i.qty})` : `Item ${i.id}`;
+        }).join(", "),
+        total_price: grandTotal // Grand Total (including shipping)
+    };
+
+    // 4. DATA FOR EMAIL (Everything including the breakdown)
+    const emailData = {
+        ...dbData,
+        items_html: itemsHTML,
+        subtotal_val: subtotal.toLocaleString(),
+        shipping_val: shippingCost.toLocaleString()
+    };
+
+    try {
+        // STEP A: SAVE TO SUPABASE (Only using dbData)
+        const { error } = await hankedClient
+            .from('customer_orders')
+            .insert([dbData]);
+
+        if (error) throw error;
+
+        // STEP B: SEND EMAILS (Using emailData which has the HTML and breakdown)
+        await emailjs.send("service_30nkwvo", "template_y589oaa", emailData);
+        await emailjs.send("service_30nkwvo", "template_ueqc1mo", emailData);
+
+        // STEP C: SUCCESS
+        document.getElementById('order-id-label').textContent = orderId;
+        document.getElementById('success-screen').style.display = 'flex';
+        Cart.clear();
+    } catch (err) {
+        console.error("Order Error:", err);
+        alert("Error: " + err.message);
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+}
+</script>
+
+</body>
+</html>

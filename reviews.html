@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews — HANKED</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <span class="nav-logo-badge"><img src="assets/logo.jpg" alt="HANKED logo"></span>
+    <span class="tag woven-text">warm & woven</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Collection</a>
+    <a href="story.html">Our Story</a>
+    <a href="supplies.html">Supplies</a>
+    <a href="custom-order.html">Custom Order</a>
+    <a href="reviews.html" class="active">Reviews</a>
+  </div>
+  <div style="display:flex; align-items:center; gap:14px;">
+    <button class="cart-btn" onclick="openCart()">Cart <span class="cart-count">0</span></button>
+    <button class="nav-toggle">&#9776;</button>
+  </div>
+</nav>
+
+<!-- Hero Section: SHARE YOUR EXPERIENCE -->
+<header class="supplies-hero">
+  <div class="container">
+    <span class="hero-eyebrow script">community love</span>
+    <h1>Share your experience</h1>
+    <p>We’d love to hear how your new crochet piece is treating you!</p>
+    
+    <div class="review-hero-actions">
+      <button class="btn btn-primary" onclick="openReviewModal()">Give Review</button>
+      <!-- You can keep or remove the View Stories button based on your design -->
+    </div>
+  </div>
+</header>
+
+<div class="chain-divider" data-links="20"></div>
+
+<!-- Display Section: WHAT CUSTOMERS SAY -->
+<section class="section" id="display-section">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #4a4a4a;">Take a look at what our customers say about us</h2>
+            <div class="divider-sm" style="width: 60px; height: 3px; background: #d4a373; margin: 20px auto;"></div>
+        </div>
+
+        <div class="reviews-grid" id="reviews-container">
+            <!-- Pretty cards load here via JS -->
+            <p style="text-align:center; grid-column:1/-1;">Loading stories...</p>
+        </div>
+    </div>
+</section>
+
+<!-- THE GIVE REVIEW MODAL -->
+<div class="modal-overlay" id="review-modal">
+  <div class="modal review-modal-content">
+    <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+    <h3>Share your HANKED story</h3>
+    <p style="margin-bottom: 20px; font-size: 0.9rem; color: #666;">Your feedback helps our small business grow.</p>
+    
+    <form id="review-form">
+      <div class="form-group">
+          <label>Your Name *</label>
+          <input type="text" name="name" placeholder="How should we address you?" required>
+      </div>
+      <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" name="email" placeholder="example@email.com" required>
+      </div>
+      
+      <div class="form-row" style="display:flex; gap:15px;">
+        <div class="form-group" style="flex:1;">
+            <label>Rating (1-5)</label>
+            <select name="rating" required>
+                <option value="5">5 Stars ★★★★★</option>
+                <option value="4">4 Stars ★★★★</option>
+                <option value="3">3 Stars ★★★</option>
+                <option value="2">2 Stars ★★</option>
+                <option value="1">1 Star ★</option>
+            </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+          <label>Your Feedback *</label>
+          <textarea name="feedback" rows="4" placeholder="Tell us about the quality, service, or how much you love your item..." required></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="post-review-btn">Post Review</button>
+    </form>
+  </div>
+</div>
+
+
+ <!-- FOOTER -->
+<footer class="main-footer">
+    <div class="footer-grid">
+        <!-- Column 1: Brand Info -->
+        <div class="footer-col brand-info">
+            <div class="footer-logo">HANKED</div>
+            <span class="footer-tag">warm & woven</span>
+            <p>A bundle of yarn — handmade by Noor & Amna. We turn strings into stories, one loop at a time.</p>
+        </div>
+
+        <!-- Column 2: Quick Links -->
+        <div class="footer-col">
+            <h4>Shop</h4>
+            <ul>
+                <li><a href="index.html">Collection</a></li>
+                <li><a href="supplies.html">Supplies</a></li>
+                <li><a href="custom-order.html">Custom Order</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 3: Customer Care (POLICIES) -->
+        <div class="footer-col">
+            <h4>Information</h4>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="openPolicy('shipping')">Shipping Policy</a></li>
+                <li><a href="javascript:void(0)" onclick="openPolicy('maker')">Maker Policy</a></li>
+                <li><a href="story.html">Our Story</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 4: Contact -->
+        <div class="footer-col">
+            <h4>Reach Us</h4>
+            <ul>
+                <li><a href="mailto:hankedbyNA@gmail.com">hankedbyNA@gmail.com</a></li>
+                <li><a href="https://instagram.com/your-handle" target="_blank">Instagram</a></li>
+                <li><a href="https://wa.me/your-number" target="_blank">WhatsApp</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>© 2026 HANKED — Hand-crocheted with love.</p>
+    </div>
+</footer>
+
+<!-- POLICY MODAL (The Popup) -->
+<div class="modal-overlay" id="policy-modal">
+    <div class="modal policy-content">
+        <button class="modal-close" onclick="closePolicy()">&times;</button>
+        <div id="policy-text">
+            <!-- Dynamic content loads here -->
+        </div>
+    </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="overlay" id="cart-overlay"></div>
+<div class="drawer" id="cart-drawer">
+    <div class="drawer-head">
+        <h3>Your Cart</h3>
+        <button class="close-btn" onclick="closeCart()">&times;</button>
+    </div>
+    <div class="drawer-items" id="drawer-items">
+    </div>
+    <div class="drawer-foot">
+    <div class="subtotal-row">
+        <span>Subtotal</span>
+        <span id="drawer-subtotal">Rs. 0</span>
+    </div>
+    
+    <div class="cart-drawer-buttons">
+         <button class="view-cart-btn" onclick="viewBag()">VIEW BAG</button>
+        <button class="submit-btn" onclick="openCheckout()">PROCEED TO CHECKOUT</button>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>

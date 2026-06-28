@@ -1,0 +1,65 @@
+<!-- cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Your Bag — HANKED</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html" class="nav-logo"><span class="woven-text">warm & woven</span></a>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h1 style="font-family: 'Playfair Display'; margin-bottom: 30px;">Your Shopping Bag</h1>
+            <div id="full-cart-list">
+                <!-- Large Image Items will load here -->
+            </div>
+            
+            <div class="cart-summary-box" style="margin-top: 40px; padding: 30px; background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: right;">
+                <h3 id="full-cart-total">Total: Rs. 0</h3>
+                <button onclick="window.location.href='checkout.html'" class="btn-primary" style="margin-top:20px; width: 300px; padding: 15px;">PROCEED TO SHIPPING</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await getCollection(); // Get product data from Supabase
+            renderFullBag();
+        });
+
+        function renderFullBag() {
+            const list = document.getElementById('full-cart-list');
+            const items = Cart.get();
+            if(items.length === 0) { list.innerHTML = "<h3>Your bag is empty.</h3>"; return; }
+
+            list.innerHTML = items.map(i => {
+                const p = window.storeItems.find(item => item.id == i.id);
+                if(!p) return "";
+                return `
+                <div class="bag-item-large" style="display: flex; gap: 30px; align-items: center; background: #fff; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee;">
+                    <img src="${p.image_url}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px;">
+                    <div style="flex: 1;">
+                        <h2 style="margin:0;">${p.name}</h2>
+                        <p style="color: #666;">Rs. ${p.price}</p>
+                        <div class="qty-control" style="margin-top: 15px; display:flex; align-items:center; gap:15px;">
+                            <button onclick="Cart.setQty(${p.id}, ${i.qty - 1}); renderFullBag();" style="border:1px solid #ccc; width:30px; height:30px; border-radius:50%;">-</button>
+                            <span style="font-weight:bold;">${i.qty}</span>
+                            <button onclick="Cart.setQty(${p.id}, ${i.qty + 1}); renderFullBag();" style="border:1px solid #ccc; width:30px; height:30px; border-radius:50%;">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <h3 style="margin:0;">Rs. ${p.price * i.qty}</h3>
+                        <button onclick="Cart.remove(${p.id}); renderFullBag();" style="color: #B46A72; background:none; text-decoration:underline; margin-top:10px;">Remove</button>
+                    </div>
+                </div>`;
+            }).join('');
+            document.getElementById('full-cart-total').textContent = "Total: Rs. " + Cart.totalPrice().toLocaleString();
+        }
+    </script>
+</body>
+</html>

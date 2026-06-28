@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story — HANKED</title>
+    <!-- Font Link -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Inter:wght@400;500;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="slide-transition" id="slide-transition">
+  <div class="slide-panel"></div><div class="slide-panel"></div><div class="slide-panel"></div><div class="slide-panel"></div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <span class="nav-logo-badge"><img src="assets/logo.jpg" alt="HANKED logo"></span>
+    <span class="tag woven-text">warm & woven</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Collection</a>
+    <a href="story.html" class="active">Our Story</a>
+    <a href="supplies.html">Supplies</a>
+    <a href="custom-order.html">Custom Order</a>
+    <a href="reviews.html" class="nav-item">REVIEWS</a>
+  </div>
+  <div style="display:flex; align-items:center; gap:14px;">
+    <button class="cart-btn" onclick="openCart()">Cart <span class="cart-count">0</span></button>
+    <button class="nav-toggle">&#9776;</button>
+  </div>
+</nav>
+
+<header class="story-hero">
+    <!-- The Image Wrapper for the Zoom Effect -->
+    <div class="hero-img-container">
+        <img src="assets/story-bg.jpg" alt="Hand-crocheting" class="ken-burns-img">
+    </div>
+    <!-- The Content -->
+    <div class="hero-content">
+        <h1 class="story-title">Two hands, one hook, a hundred hanks</h1>
+        <p class="story-subtitle">
+            HANKED started with two Computer Science students who were supposed to 
+            be debugging code but somehow ended up untangling yarn instead.
+        </p>
+    </div>
+</header>
+
+<div class="chain-divider" data-links="20"></div>
+
+<section class="story-block">
+  <div class="story-collage reveal">
+    <img src="assets/story-1.jpg" alt="Coffee and conversation by the window">
+    <img src="assets/story-2.jpg" alt="Late-night assignments together">
+    <img src="assets/story-3.jpg" alt="Crocheting side by side">
+    <img src="assets/story-4.jpg" alt="Yarn picnic by the lake">
+  </div>
+  <div class="story-text reveal">
+   <span class="eyebrow script">how it started</span>
+    <h2>From classmates to co-founders</h2>
+    <p>We were just classmates until our third year, when assignments, deadlines, and university chaos turned us into friends. Somewhere between "just one crochet project" and "we should totally sell these," HANKED was born.</p>
+  </div>
+</section>
+
+<section class="story-block reverse">
+  <div class="story-img reveal">
+    <img src="assets/workspace.jpg" alt="Our Workspace" style="width:100%; height:100%; object-fit:cover; border-radius:24px;">
+  </div>
+  <div class="story-text reveal">
+    <span class="eyebrow script">how we work</span>
+    <h2>A creative escape, stitched into a passion</h2>
+    <p>What began as a creative escape from screens and coding errors became a shared passion for handmade creations. Today, we're friends, co-founders, crochet enthusiasts, and professional buyers of yarn we definitely don't need.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="section-head reveal">
+    <p style="font-family:var(--font-display); font-size:1.3rem; font-style:italic; color:var(--plum); max-width:680px; margin:0 auto;">
+      Welcome to HANKED — where friendship, creativity, and a little bit of chaos are woven into every stitch.
+    </p>
+  </div>
+</section>
+
+<div class="chain-divider" data-links="20"></div>
+
+<!-- MEET THE MAKERS SECTION -->
+<section class="section">
+  <div class="section-head reveal">
+    <span class="eyebrow script">meet the makers</span>
+    <h2>Noor & Amna</h2>
+  </div>
+  <div class="founders">
+    <!-- NOOR'S CARD -->
+    <div class="founder-card reveal">
+      <div class="founder-img">
+        <img src="assets/noor.jpg" alt="Noor" onerror="this.src='assets/logo.jpg'">
+      </div>
+      <h3>Noor</h3>
+      <p style="font-size:0.88rem; color:#6b4453; margin-top:6px;">Co-founder, crochet enthusiast, and a professional buyer of yarn she definitely doesn't need.</p>
+    </div>
+    <!-- AMNA'S CARD -->
+    <div class="founder-card reveal">
+      <div class="founder-img">
+        <img src="assets/amna.jpg" alt="Amna" onerror="this.src='assets/logo.jpg'">
+      </div>
+      <h3>Amna</h3>
+      <p style="font-size:0.88rem; color:#6b4453; margin-top:6px;">Co-founder, fellow yarn hoarder, and the reason "just one project" never stays just one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="main-footer">
+    <div class="footer-grid">
+        <!-- Column 1: Brand Info -->
+        <div class="footer-col brand-info">
+            <div class="footer-logo">HANKED</div>
+            <span class="footer-tag">warm & woven</span>
+            <p>A bundle of yarn — handmade by Noor & Amna. We turn strings into stories, one loop at a time.</p>
+        </div>
+
+        <!-- Column 2: Quick Links -->
+        <div class="footer-col">
+            <h4>Shop</h4>
+            <ul>
+                <li><a href="index.html">Collection</a></li>
+                <li><a href="supplies.html">Supplies</a></li>
+                <li><a href="custom-order.html">Custom Order</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 3: Customer Care (POLICIES) -->
+        <div class="footer-col">
+            <h4>Information</h4>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="openPolicy('shipping')">Shipping Policy</a></li>
+                <li><a href="javascript:void(0)" onclick="openPolicy('maker')">Maker Policy</a></li>
+                <li><a href="story.html">Our Story</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 4: Contact -->
+        <div class="footer-col">
+            <h4>Reach Us</h4>
+            <ul>
+                <li><a href="mailto:hankedbyNA@gmail.com">hankedbyNA@gmail.com</a></li>
+                <li><a href="https://instagram.com/your-handle" target="_blank">Instagram</a></li>
+                <li><a href="https://wa.me/your-number" target="_blank">WhatsApp</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>© 2026 HANKED — Hand-crocheted with love.</p>
+    </div>
+</footer>
+
+<!-- POLICY MODAL (The Popup) -->
+<div class="modal-overlay" id="policy-modal">
+    <div class="modal policy-content">
+        <button class="modal-close" onclick="closePolicy()">&times;</button>
+        <div id="policy-text">
+            <!-- Dynamic content loads here -->
+        </div>
+    </div>
+</div> 
+<!-- CART DRAWER -->
+<div class="overlay" id="cart-overlay"></div>
+<div class="drawer" id="cart-drawer">
+    <div class="drawer-head">
+        <h3>Your Cart</h3>
+        <button class="close-btn" onclick="closeCart()">&times;</button>
+    </div>
+    <div class="drawer-items" id="drawer-items">
+        <!-- Cart items load here -->
+    </div>
+    <div class="drawer-foot">
+    <div class="subtotal-row">
+        <span>Subtotal</span>
+        <span id="drawer-subtotal">Rs. 0</span>
+    </div>
+    
+    <!-- Professional Button Section -->
+    <div class="cart-drawer-buttons">
+        <!-- Button 1: View Cart -->
+         <button class="view-cart-btn" onclick="viewBag()">VIEW BAG</button>
+        
+        <!-- Button 2: Proceed (Already in your code, just styled better) -->
+        <button class="submit-btn" onclick="openCheckout()">PROCEED TO CHECKOUT</button>
+    </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeCheckout()">&times;</button>
+    <div id="checkout-step-form">
+      <h3>Confirm your order</h3>
+      <p class="sub">Tell us where to send your hand-crocheted goodies.</p>
+      <form id="checkout-form">
+        <div class="form-group"><label>Full name *</label><input type="text" name="name" required></div>
+        <div class="form-group"><label>Email *</label><input type="email" name="email" required></div>
+        <div class="form-group"><label>Phone number *</label><input type="tel" name="phone" required></div>
+        <div class="form-group"><label>Delivery address *</label><textarea name="address" rows="3" required></textarea></div>
+        <div class="form-group"><label>Notes (colour preference, etc.)</label><textarea name="notes" rows="2"></textarea></div>
+        <button type="submit" class="submit-btn">Place order</button>
+      </form>
+    </div>
+    <div id="checkout-step-success" style="display:none;">
+      <div class="success-box">
+        <h3>Order placed! 🧶</h3>
+        <p class="sub">Thank you for choosing HANKED. We'll reach out shortly to confirm details.</p>
+        <div class="order-id-pill" id="order-id-display"></div>
+        <button class="submit-btn" onclick="closeCheckout()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- REQUIRED SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
