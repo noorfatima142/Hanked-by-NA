@@ -43,28 +43,35 @@
 </header>
 
 <div class="chain-divider" data-links="20"></div>
+<form action="https://formbold.com/s/ozyjY" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+    
+    <p class="label" style="margin-bottom: 5px; font-weight: 600;">REFERENCE PICTURE (REQUIRED) *</p>
+    
+    <!-- We use a LABEL here. Clicking anywhere inside it triggers the file input -->
+    <label style="display: block; border: 2px dashed #a67c7c; padding: 25px; text-align: center; background: #fafafa; border-radius: 12px; cursor: pointer; position: relative;">
+        <img src="assets/paperclip-icon.png" alt="clip" style="width: 25px; opacity: 0.5; margin-bottom: 10px;">
+        <p id="file-name-display" style="font-size: 14px; color: #666; margin: 0;">Click to upload reference photo</p>
+        
+        <!-- We make the input invisible (opacity: 0) instead of display:none. 
+             This fixes the 'not focusable' error while keeping it hidden. -->
+        <input type="file" id="file-input" name="file" accept="image/*" required 
+               style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;" 
+               onchange="showFileName()">
+    </label>
 
-    <!-- Replace YOUR_FORM_ID with your actual ID from FormBold -->
-<form action="https://formbold.com/s/ozyjY" method="POST" enctype="multipart/form-data">
+    <p class="label" style="margin-bottom: 5px; font-weight: 600;">DESCRIPTION</p>
+    <textarea name="description" placeholder="Describe your idea here..." required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; height: 100px; box-sizing: border-box;"></textarea>
 
-    <p class="label">REFERENCE PICTURE (REQUIRED) *</p>
-    <div class="upload-box" onclick="document.getElementById('file-input').click()">
-        <p id="file-name-display">Click to upload photo</p>
-        <!-- The name MUST be "file" for many of these services -->
-        <input type="file" id="file-input" name="file" accept="image/*" required style="display:none;" onchange="showFileName()">
-    </div>
+    <p class="label" style="margin-bottom: 5px; font-weight: 600;">YOUR NAME *</p>
+    <input type="text" name="name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
 
-    <p class="label">DESCRIPTION</p>
-    <textarea name="description" required></textarea>
+    <p class="label" style="margin-bottom: 5px; font-weight: 600;">PHONE NUMBER (WHATSAPP) *</p>
+    <input type="tel" name="phone" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
 
-    <p class="label">YOUR NAME *</p>
-    <input type="text" name="name" required>
-
-    <p class="label">PHONE NUMBER *</p>
-    <input type="tel" name="phone" required>
-
-    <button type="submit">SUBMIT REQUEST</button>
-</form>  
+    <button type="submit" style="margin-top: 10px; width: 100%; background-color: #a67c7c; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">
+        SUBMIT REQUEST
+    </button>
+</form>
     <!-- This message is hidden at first -->
       <div id="thank-you-message" style="display:none; text-align:center; padding: 40px; background: #fff; border-radius: 15px;">
         <h2 style="color: #a67c7c;">Order Received! 🧶</h2>
