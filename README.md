@@ -1,7 +1,5 @@
-<img width="1310" height="676" alt="image" src="https://github.com/user-attachments/assets/1f966d6f-6504-45f5-80a1-e0dcbce99ae0" /># Hanked-by-NA
+ Hanked-by-NA
 So we have made a website for our small Business HANKED BY NA 
-
-# 🧶 HANKED — warm & woven
 > Turning strings into stories, one loop at a time.
 
 **HANKED** is a boutique handmade crochet brand founded by **Noor & Amna**. We specialize in creating high-quality, hand-crocheted items that blend comfort with craftsmanship. From cozy accessories to custom-imagined pieces, every stitch is made with love.
