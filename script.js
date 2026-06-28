@@ -1,5 +1,5 @@
 /* 
-  HANKED SHOP - COMPLETE JAVASCRIPT (PERSISTENT VERSION)
+  HANKED SHOP - OPTIMIZED COMPLETE JAVASCRIPT
   Features: Supabase Integration, Cart System, EmailJS Checkout, Custom Orders
 */
 
@@ -12,58 +12,46 @@ const HANKED_CONFIG = {
   emailjsServiceId: "YOUR_SERVICE_ID",         
   emailjsOrderTemplateCustomer: "TEMPLATE_ID_1",
   emailjsOrderTemplateOwner: "TEMPLATE_ID_2",
-  emailjsCustomTemplateOwner: "TEMPLATE_ID_3",
   ownerEmail: "yourshop@example.com"            
 };
 
-// Use 'hankedClient' for Supabase
 const hankedClient = supabase.createClient(PROJ_URL, PROJ_KEY);
 
-// GLOBAL DATA STATE (Persistent via LocalStorage)
+// GLOBAL DATA STATE
 window.storeItems = JSON.parse(localStorage.getItem('hanked_cached_products')) || [];
+window.supplyItems = JSON.parse(localStorage.getItem('hanked_cached_supplies')) || [];
 
-/* ---------- 2. DATA FETCHING (WITH PERSISTENCE) ---------- */
-async function getCollection() {
-    console.log("Syncing collection from Supabase...");
-    
-    const { data, error } = await hankedClient.from('products').select('*');
+/* ---------- 2. DATA FETCHING ---------- */
+async function syncCollection(table, storageKey, stateVarName, gridId) {
+    console.log(`Syncing ${table}...`);
+    const { data, error } = await hankedClient.from(table).select('*');
 
     if (error) {
-        console.error("Supabase Error:", error.message);
-        // If error, we still have the cached window.storeItems from localStorage
-        if (window.storeItems.length > 0) {
-            renderProducts('all');
-        } else {
-            showToast("Error loading products.");
-        }
-        return;
+        console.error(`Supabase Error (${table}):`, error.message);
+    } else {
+        window[stateVarName] = data;
+        localStorage.setItem(storageKey, JSON.stringify(data));
     }
 
-    console.log("Data Received & Cached:", data);
-    window.storeItems = data;
+    // Render if we are on a page with the corresponding grid
+    if (gridId) renderGrid(gridId, window[stateVarName], 'all');
     
-    // SAVE TO STORAGE so other pages (Cart/Checkout) can access it
-    localStorage.setItem('hanked_cached_products', JSON.stringify(data));
-    
-    // Render if we are on a page with a grid
-    renderProducts('all');
-    
-    // Update cart displays in case prices changed
-    window.storeItems = data;
-    localStorage.setItem('hanked_cached_products', JSON.stringify(data));
-    
-    renderProducts('all');
+    // Update UI components that rely on price/data
     Cart.renderDrawer();
-    renderCheckoutSummary(); // Add this line here too!
+    renderCheckoutSummary();
 }
+
+// Helper to find item in either collection
+const findItem = (id) => [...window.storeItems, ...window.supplyItems].find(p => p.id == id);
 
 /* ---------- 3. RENDERING LOGIC ---------- */
 function productCardHTML(p) {
+    const isSoldOut = p.stock <= 0;
     return `
-      <div class="card reveal in" onclick="openProductModal(${p.id})" style="cursor:pointer; opacity:1; transform:none;">
+      <div class="card reveal in" onclick="openProductModal(${p.id})" style="cursor:pointer;">
           <div class="card-img">
               <img src="${p.image_url}" alt="${p.name}" onerror="this.src='assets/logo.jpg'">
-              ${p.stock <= 0 ? '<span class="card-badge sold">Sold Out</span>' : ''}
+              ${isSoldOut ? '<span class="card-badge sold">Sold Out</span>' : ''}
           </div>
           <div class="card-body">
               <span class="cat">${p.category || 'Handmade'}</span>
@@ -79,18 +67,16 @@ function productCardHTML(p) {
       </div>`;
 }
 
-function renderProducts(filterType) {
-    const grid = document.getElementById('product-grid');
+function renderGrid(gridId, items, filterType) {
+    const grid = document.getElementById(gridId);
     if (!grid) return;
 
-    grid.innerHTML = ''; 
-
     const filtered = (filterType === 'all' || !filterType) 
-        ? window.storeItems 
-        : window.storeItems.filter(p => p.category?.toLowerCase() === filterType.toLowerCase());
+        ? items 
+        : items.filter(p => p.category?.toLowerCase() === filterType.toLowerCase());
 
     if (filtered.length === 0) {
-        grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding: 40px;'>No items found in this category 🧶</p>";
+        grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding: 40px;'>No items found 🧶</p>";
         return;
     }
 
@@ -101,58 +87,42 @@ function renderProducts(filterType) {
 /* ---------- 4. CART SYSTEM (PERSISTENT) ---------- */
 const Cart = {
   KEY: "hanked_cart",
-  
-  get() { 
-    try { return JSON.parse(localStorage.getItem(this.KEY)) || []; } 
-    catch(e) { return []; } 
-  },
-  
+  get() { try { return JSON.parse(localStorage.getItem(this.KEY)) || []; } catch(e) { return []; } },
   save(items) { 
     localStorage.setItem(this.KEY, JSON.stringify(items)); 
     this.renderCount(); 
+    this.renderDrawer();
+    renderCheckoutSummary();
   },
   
   add(productId) {
     const items = this.get();
     const existing = items.find(i => i.id === productId);
-    if (existing) { 
-        existing.qty += 1; 
-    } else { 
-        items.push({ id: productId, qty: 1 }); 
-    }
+    existing ? (existing.qty += 1) : items.push({ id: productId, qty: 1 });
     this.save(items);
     showToast("Added to your bag!");
-    this.renderDrawer();
   },
   
   remove(productId) {
-    let items = this.get().filter(i => i.id !== productId);
-    this.save(items); 
-    this.renderDrawer();
+    this.save(this.get().filter(i => i.id !== productId));
   },
   
   setQty(productId, qty) {
-    let items = this.get();
+    const items = this.get();
     const it = items.find(i => i.id === productId);
-    if (it) { it.qty = Math.max(1, qty); }
-    this.save(items); 
-    this.renderDrawer();
+    if (it) it.qty = Math.max(1, qty);
+    this.save(items);
   },
   
-  clear() { 
-    this.save([]); 
-    this.renderDrawer(); 
-  },
-  
+  clear() { this.save([]); },
   totalCount() { return this.get().reduce((s, i) => s + i.qty, 0); },
   totalPrice() {
     return this.get().reduce((s, i) => {
-      // Look in both Handmade Products AND Supplies
-      const allItems = [...window.storeItems, ...window.supplyItems];
-      const p = allItems.find(item => item.id === i.id);
+      const p = findItem(i.id);
       return s + (p ? p.price * i.qty : 0);
     }, 0);
   },
+
   renderCount() {
     document.querySelectorAll('.cart-count').forEach(el => el.textContent = this.totalCount());
   },
@@ -169,16 +139,12 @@ const Cart = {
       return;
     }
      
-    const allAvailableItems = [...window.storeItems, ...window.supplyItems];
     wrap.innerHTML = items.map(i => {
-      // NEW CODE (Looks at BOTH products and supplies)
-      const p = allAvailableItems.find(item => item.id === i.id);
-      if (!p) return ""; // Item might not be in cache yet
+      const p = findItem(i.id);
+      if (!p) return "";
       return `
       <div class="cart-item">
-        <div class="cart-item-img">
-            <img src="${p.image_url}" alt="${p.name}" onerror="this.src='assets/logo.jpg'">
-        </div>
+        <div class="cart-item-img"><img src="${p.image_url}" onerror="this.src='assets/logo.jpg'"></div>
         <div class="cart-item-info">
           <h4>${p.name}</h4>
           <div class="meta">${formatPKR(p.price)} each</div>
@@ -196,12 +162,10 @@ const Cart = {
   }
 };
 
-/* ---------- 5. UI CONTROLS (DRAWER & MODALS) ---------- */
+/* ---------- 5. UI CONTROLS ---------- */
 function openCart() {
-  const overlay = document.getElementById('cart-overlay');
-  const drawer = document.getElementById('cart-drawer');
-  if(overlay) overlay.classList.add('open');
-  if(drawer) drawer.classList.add('open');
+  document.getElementById('cart-overlay')?.classList.add('open');
+  document.getElementById('cart-drawer')?.classList.add('open');
   Cart.renderDrawer();
 }
 
@@ -211,452 +175,215 @@ function closeCart() {
 }
 
 window.openProductModal = function(id) {
-    const product = window.storeItems.find(p => p.id == id);
-    if (!product) return;
+    const p = findItem(id);
+    if (!p) return;
 
-    document.getElementById('modal-img').src = product.image_url;
-    document.getElementById('modal-name').textContent = product.name;
-    document.getElementById('modal-cat').textContent = product.category || 'Handmade';
-    document.getElementById('modal-price').textContent = "Rs. " + product.price;
-    document.getElementById('modal-desc').textContent = product.description || "Beautifully hand-crocheted with care.";
+    document.getElementById('modal-img').src = p.image_url;
+    document.getElementById('modal-name').textContent = p.name;
+    document.getElementById('modal-cat').textContent = p.category || 'Handmade';
+    document.getElementById('modal-price').textContent = formatPKR(p.price);
+    document.getElementById('modal-desc').textContent = p.description || "Beautifully hand-crocheted.";
     document.getElementById('modal-qty').value = 1;
 
     document.getElementById('modal-add-btn').onclick = () => {
         const qty = parseInt(document.getElementById('modal-qty').value);
-        for(let i=0; i < qty; i++) { Cart.add(product.id); }
+        for(let i=0; i < qty; i++) { Cart.add(p.id); }
         closeProductModal();
     };
-
     document.getElementById('product-modal').classList.add('open');
 };
 
-window.closeProductModal = function() {
-    document.getElementById('product-modal').classList.remove('open');
-};
-
-window.changeModalQty = function(amt) {
+window.closeProductModal = () => document.getElementById('product-modal').classList.remove('open');
+window.changeModalQty = (amt) => {
     const input = document.getElementById('modal-qty');
-    let val = parseInt(input.value) + amt;
-    if (val < 1) val = 1;
-    input.value = val;
+    input.value = Math.max(1, parseInt(input.value) + amt);
 };
 
-window.openReviewModal = function() {
-    document.getElementById('review-modal').classList.add('open');
-};
-
-window.closeReviewModal = function() {
-    document.getElementById('review-modal').classList.remove('open');
-};
-
-window.viewBag = function() {
-    window.location.href = 'cart.html'; 
-};
-
-window.openCheckout = function() {
-    window.location.href = 'checkout.html'; 
-};
-
-/* ---------- 6. CHECKOUT LOGIC ---------- */
-function handleCheckoutSubmit(e) {
-  e.preventDefault();
-  const form = e.target;
-  const name = form.name.value.trim();
-  const email = form.email.value.trim();
-  const phone = form.phone.value.trim();
-  const address = form.address.value.trim();
-
-  if (!name || !email || !phone || !address) {
-    showToast("Please fill in all required fields");
-    return;
-  }
-
-  const currentCart = Cart.get();
-  if (currentCart.length === 0) {
-      showToast("Your bag is empty!");
-      return;
-  }
-
-  const orderId = generateOrderId();
-  const orderSummary = currentCart.map(i => {
-    const p = window.storeItems.find(item => item.id === i.id);
-    return p ? `${p.name} x${i.qty} — ${formatPKR(p.price * i.qty)}` : `Item ID ${i.id} x${i.qty}`;
-  }).join("\n");
-
-  const btn = form.querySelector('.submit-btn');
-  btn.disabled = true; 
-  btn.textContent = "Placing order...";
-
-  const params = {
-    order_id: orderId,
-    customer_name: name,
-    customer_email: email,
-    customer_phone: phone,
-    customer_address: address,
-    order_summary: orderSummary,
-    order_total: formatPKR(Cart.totalPrice())
-  };
-
-  if (typeof emailjs !== "undefined" && !HANKED_CONFIG.emailjsPublicKey.startsWith("YOUR_")) {
-    Promise.all([
-      emailjs.send(HANKED_CONFIG.emailjsServiceId, HANKED_CONFIG.emailjsOrderTemplateCustomer, params),
-      emailjs.send(HANKED_CONFIG.emailjsServiceId, HANKED_CONFIG.emailjsOrderTemplateOwner, params)
-    ]).then(() => {
-      finishCheckout(orderId);
-    }).catch(err => {
-      console.error("Email Error:", err);
-      finishCheckout(orderId); 
-    });
-  } else {
-    console.warn("EmailJS not configured.");
-    finishCheckout(orderId);
-  }
-}
-
-function finishCheckout(orderId) {
-  const formContainer = document.getElementById('checkout-step-form');
-  const successBox = document.getElementById('checkout-step-success');
-  
-  if(formContainer) formContainer.style.display = 'none';
-  if(successBox) successBox.style.display = 'block';
-  
-  const orderDisplay = document.getElementById('order-id-display');
-  if(orderDisplay) orderDisplay.textContent = orderId;
-  
-  Cart.clear();
-}
-
-/* ---------- 7. UTILITIES ---------- */
-function generateOrderId() {
-  const d = new Date();
-  const stamp = d.getFullYear().toString().slice(-2) + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-  const rand = Math.floor(1000 + Math.random() * 9000);
-  return `HKD-${stamp}-${rand}`;
-}
-
-function formatPKR(n) { return "Rs. " + (n || 0).toLocaleString(); }
-let toastTimer;
-
-function showToast(msg) {
-    // 1. Check for the toast element, create if missing
-    let t = document.getElementById('toast');
-    if (!t) {
-        t = document.createElement('div');
-        t.id = 'toast';
-        document.body.appendChild(t);
-    }
-
-    // 2. THE DIRECT FIX: Always pull it out of any hidden containers
-    if (t.parentElement !== document.body) {
-        document.body.appendChild(t);
-    }
-
-    // 3. Reset the state for the animation
-    clearTimeout(toastTimer);
-    t.classList.remove('show');
-
-    // 4. Update the text (Just the message, no icons)
-    t.textContent = msg;
-
-    // 5. Trigger the slide-in animation
-    // A 10ms delay ensures the browser registers the removal of 'show'
-    setTimeout(() => {
-        t.classList.add('show');
-    }, 10);
-
-    // 6. Professional timing: 3 seconds is best for readability
-    toastTimer = setTimeout(() => {
-        t.classList.remove('show');
-    }, 1500);
-}
-/* --- IMPORTANT: CHECK THESE FUNCTIONS --- */
-function initScrollReveal() {
-  const els = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
-  }, { threshold: 0.15 });
-  els.forEach(el => obs.observe(el));
-}
-
-function initNav() {
-  const nav = document.querySelector('.nav');
-  if (nav) {
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 30) nav.classList.add('scrolled'); 
-        else nav.classList.remove('scrolled');
-    });
-  }
-  const toggle = document.querySelector('.nav-toggle');
-  const links = document.querySelector('.nav-links');
-  if (toggle && links) toggle.addEventListener('click', () => links.classList.toggle('open'));
-}
-
-/*----------- 9. REVIEWS SYSTEM ---------------*/
-async function fetchReviews() {
-    const reviewGrid = document.getElementById('reviews-container');
-    if (!reviewGrid) return;
-
-    reviewGrid.innerHTML = "<p style='text-align:center;'>Loading your stories...</p>";
-
-    try {
-        const { data, error } = await hankedClient.from('reviews').select('*');
-
-        if (error) {
-            console.error("Supabase Error:", error.message);
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            reviewGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding: 40px;'>No reviews yet. Be the first to share your HANKED story! 🧶</p>";
-            return;
-        }
-
-        reviewGrid.innerHTML = data.map(r => `
-            <div class="review-card" style="background:#fff; padding:25px; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.05); margin-bottom:20px;">
-                <div class="stars" style="color: #FFB800; margin-bottom: 10px;">
-                    ${'★'.repeat(r.rating || 5)}${'☆'.repeat(5 - (r.rating || 5))}
-                </div>
-                <h4 style="font-family: 'Playfair Display', serif; color: #2D3A47; margin:0 0 10px 0;">${r.customer_name || 'HANKED Customer'}</h4>
-                <p style="font-style: italic; color: #666; margin:0;">"${r.feedback || r.comment || 'No feedback provided.'}"</p> 
-            </div>
-        `).join('');
-
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-async function handleReviewSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-    const btn = document.getElementById('post-review-btn');
-
-    const reviewData = {
-        customer_name: form.name.value,
-        email: form.email.value,      
-        rating: parseInt(form.rating.value),
-        feedback: form.feedback.value 
-    };
-
-    if(btn) {
-        btn.disabled = true;
-        btn.textContent = "Posting...";
-    }
-
-    const { error } = await hankedClient.from('reviews').insert([reviewData]);
-
-    if (error) {
-        showToast("Error: " + error.message);
-    } else {
-        showToast("Thank you for sharing your feedback!"); 
-        form.reset();                             
-        closeReviewModal();                       
-        fetchReviews();                           
-    }
-    if(btn) {
-        btn.disabled = false;
-        btn.textContent = "Post Review";
-    }
-}
-
-/*----------- 8. INITIALIZATION (PAGE LOAD) ---------------*/
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Core Global UI
-    initNav();
-    Cart.renderCount();
-    // IF ON PRODUCTS PAGE
-    if (document.getElementById('product-grid')) {
-        getCollection();
-        setupFilterButtons(renderProducts);
-    }
-    // IF ON SUPPLIES PAGE
-    if (document.getElementById('supplies-grid')) {
-        getSuppliesCollection();
-        setupFilterButtons(renderSupplies);
-    }
-    // 2. Load Products (Always do this to ensure Cart/Checkout has data)
-    getCollection().then(() => {
-        renderCheckoutSummary();
-    });
-
-    // 3. Setup Filter Buttons (Only if they exist)
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            renderProducts(e.target.dataset.filter);
-        });
-    });
-
-    // 4. Review Page Logic
-    if (document.getElementById('reviews-container')) {
-        fetchReviews();
-    }
-    
-    const reviewForm = document.getElementById('review-form');
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', handleReviewSubmit);
-    }
-
-    // 5. Checkout Logic
-    const checkoutForm = document.getElementById('checkout-form');
-    if (checkoutForm) {
-        checkoutForm.addEventListener('submit', handleCheckoutSubmit);
-    }
-
-    // 6. Global UI Interactions
-    const overlay = document.getElementById('cart-overlay');
-    if (overlay) {
-        overlay.addEventListener('click', closeCart);
-    }
-
-    // 7. EmailJS Init
-    if (typeof emailjs !== "undefined" && !HANKED_CONFIG.emailjsPublicKey.startsWith("YOUR_")) {
-        emailjs.init(HANKED_CONFIG.emailjsPublicKey);
-    }
-});
-function setupFilterButtons(renderFunc) {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            renderFunc(e.target.dataset.filter);
-        });
-    });
-}
-/* ---------- NEW: CHECKOUT SUMMARY RENDERING ---------- */
+/* ---------- 6. CHECKOUT & SHIPPING ---------- */
 function renderCheckoutSummary() {
     const summaryWrap = document.getElementById('checkout-summary-items');
-    const totalEl = document.getElementById('checkout-final-total');
     if (!summaryWrap) return;
 
     const items = Cart.get();
-    // THE FIX: Combine both data sources
-    const allItems = [...window.storeItems, ...window.supplyItems];
-
     summaryWrap.innerHTML = items.map(i => {
-        const p = allItems.find(item => item.id === i.id);
+        const p = findItem(i.id);
         if (!p) return ""; 
         return `
             <div class="checkout-item">
-                <img src="${p.image_url}" style="width:50px; height:50px;">
-                <div style="flex:1;">
-                    <h4>${p.name}</h4>
+                <img src="${p.image_url}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
+                <div style="flex:1; margin-left:10px;">
+                    <h4 style="margin:0; font-size:0.9rem;">${p.name}</h4>
                     <small>Qty: ${i.qty}</small>
                 </div>
                 <span>${formatPKR(p.price * i.qty)}</span>
             </div>`;
     }).join('');
 
-    // Ensure shipping is recalculated whenever the summary renders
     calculateShipping(); 
 }
 
-// Global variable for supplies
-window.supplyItems = JSON.parse(localStorage.getItem('hanked_cached_supplies')) || [];
-
-/* ---------- FETCH SUPPLIES FROM 'supplies' TABLE ---------- */
-async function getSuppliesCollection() {
-    console.log("Fetching supplies from Supabase...");
-    
-    const { data, error } = await hankedClient.from('supplies').select('*');
-
-    if (error) {
-        console.error("Supabase Supplies Error:", error.message);
-        if (window.supplyItems.length > 0) renderSupplies('all');
-        return;
-    }
-
-    window.supplyItems = data;
-    localStorage.setItem('hanked_cached_supplies', JSON.stringify(data));
-    renderSupplies('all');
-}
-
-/* ---------- RENDER SUPPLIES GRID ---------- */
-function renderSupplies(filterType) {
-    const grid = document.getElementById('supplies-grid'); // Use a specific ID for supplies
-    if (!grid) return;
-
-    grid.innerHTML = ''; 
-
-    const filtered = (filterType === 'all' || !filterType) 
-        ? window.supplyItems 
-        : window.supplyItems.filter(p => p.category?.toLowerCase() === filterType.toLowerCase());
-
-    if (filtered.length === 0) {
-        grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding: 40px;'>No supplies found in this category 🧶</p>";
-        return;
-    }
-
-    // Use the same card HTML logic as products
-    grid.innerHTML = filtered.map(productCardHTML).join('');
-    initScrollReveal();
-}
-function openPolicy(type) {
-    const modal = document.getElementById('policy-modal');
-    const content = document.getElementById('policy-text');
-    
-    if (type === 'shipping') {
-        content.innerHTML = `
-            <h2>Shipping Policy 🚚</h2>
-            <p><strong>Processing Time:</strong> Orders are usually processed within 24-48 hours after the item is finished.</p>
-            <p><strong>Shipping Rates:</strong> Karachi: <strong>Rs. 200/</strong> , For other cities: <strong>Rs. 350/.</strong>.</p>
-            <p><strong>Delivery Timeline:</strong> Once shipped, your package will reach you in 3-5 business days.</p>
-        `;
-    } else if (type === 'maker') {
-        content.innerHTML = `
-            <h2>Maker Policy 🧶</h2>
-            <p>HANKED products are 100% handmade. Quality takes time, and we appreciate your patience!</p>
-            <ul>
-                <li><strong>Charms & Small Items:</strong> Take approximately 1 days or less sometimes.</li>
-                <li><strong>Cardigans & Large Items:</strong> Take approximately 3-5 days to crochet.</li>
-                <li><strong>Custom Designs:</strong> Timeline will be shared via WhatsApp/Email after design approval.</li>
-            </ul>
-            <p><em>Note: Timelines may vary during busy holiday seasons.</em></p>
-        `;
-    }
-    
-    modal.classList.add('open');
-}
-
-function closePolicy() {
-    document.getElementById('policy-modal').classList.remove('open');
-}
-let shippingCost = 0;
-
 function calculateShipping() {
-    const cityInput = document.getElementById('city-input').value.trim().toLowerCase();
+    const cityInput = document.getElementById('city-input')?.value.trim().toLowerCase();
     const shippingEl = document.getElementById('summary-shipping');
     const totalEl = document.getElementById('summary-total');
+    if (!shippingEl || !totalEl) return;
+
     const subtotal = Cart.totalPrice();
-
-    // 1. If the field is empty, shipping is 0
-    if (cityInput === "") {
-        shippingCost = 0;
-    } 
-    // 2. If they type "karachi"
-    else if (cityInput === "karachi") {
-        shippingCost = 200;
-    } 
-    // 3. Anything else they type
-    else {
-        shippingCost = 350;
-    }
-
-    // Update the UI
-    shippingEl.textContent = "Rs. " + shippingCost.toLocaleString();
+    let shipping = 0;
     
-    const grandTotal = subtotal + shippingCost;
-    totalEl.textContent = "Rs. " + grandTotal.toLocaleString();
-}
-function showFileName() {
-    const fileInput = document.getElementById('file-input');
-    const nameDisplay = document.getElementById('file-name-display');
-    if (fileInput.files.length > 0) {
-        nameDisplay.innerText = "Selected: " + fileInput.files[0].name;
-        nameDisplay.style.color = "#a67c7c";
-        nameDisplay.style.fontWeight = "bold";
+    if (cityInput) {
+        shipping = (cityInput === "karachi") ? 200 : 350;
     }
+
+    shippingEl.textContent = formatPKR(shipping);
+    totalEl.textContent = formatPKR(subtotal + shipping);
 }
+
+async function handleCheckoutSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const currentCart = Cart.get();
+  
+  if (currentCart.length === 0) return showToast("Your bag is empty!");
+
+  const orderId = `HKD-${Date.now().toString().slice(-6)}`;
+  const orderSummary = currentCart.map(i => {
+    const p = findItem(i.id);
+    return p ? `${p.name} x${i.qty}` : `ID:${i.id} x${i.qty}`;
+  }).join("\n");
+
+  const btn = form.querySelector('.submit-btn');
+  btn.disabled = true; btn.textContent = "Placing order...";
+
+  const params = {
+    order_id: orderId,
+    customer_name: form.name.value,
+    customer_email: form.email.value,
+    customer_phone: form.phone.value,
+    customer_address: form.address.value,
+    order_summary: orderSummary,
+    order_total: formatPKR(Cart.totalPrice() + (form.city.value.toLowerCase() === 'karachi' ? 200 : 350))
+  };
+
+  try {
+    if (typeof emailjs !== "undefined" && !HANKED_CONFIG.emailjsPublicKey.startsWith("YOUR_")) {
+        await Promise.all([
+            emailjs.send(HANKED_CONFIG.emailjsServiceId, HANKED_CONFIG.emailjsOrderTemplateCustomer, params),
+            emailjs.send(HANKED_CONFIG.emailjsServiceId, HANKED_CONFIG.emailjsOrderTemplateOwner, params)
+        ]);
+    }
+    finishCheckout(orderId);
+  } catch (err) {
+    console.error("Order Error:", err);
+    finishCheckout(orderId); 
+  }
+}
+
+function finishCheckout(orderId) {
+    document.getElementById('checkout-step-form').style.display = 'none';
+    document.getElementById('checkout-step-success').style.display = 'block';
+    document.getElementById('order-id-display').textContent = orderId;
+    Cart.clear();
+}
+
+/* ---------- 7. REVIEWS ---------- */
+async function fetchReviews() {
+    const container = document.getElementById('reviews-container');
+    if (!container) return;
+
+    const { data } = await hankedClient.from('reviews').select('*');
+    if (!data || data.length === 0) {
+        container.innerHTML = "<p>No reviews yet. 🧶</p>";
+        return;
+    }
+
+    container.innerHTML = data.map(r => `
+        <div class="review-card">
+            <div class="stars">${'★'.repeat(r.rating || 5)}${'☆'.repeat(5 - (r.rating || 5))}</div>
+            <h4>${r.customer_name}</h4>
+            <p>"${r.feedback || r.comment}"</p> 
+        </div>
+    `).join('');
+}
+
+/* ---------- 8. INITIALIZATION ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+    initNav();
+    Cart.renderCount();
+    
+    // Page-specific Initializations
+    if (document.getElementById('product-grid')) syncCollection('products', 'hanked_cached_products', 'storeItems', 'product-grid');
+    if (document.getElementById('supplies-grid')) syncCollection('supplies', 'hanked_cached_supplies', 'supplyItems', 'supplies-grid');
+    if (document.getElementById('reviews-container')) fetchReviews();
+    
+    // Generic Filter Button Logic
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filter = e.target.dataset.filter;
+            const isSupplies = !!document.getElementById('supplies-grid');
+            renderGrid(isSupplies ? 'supplies-grid' : 'product-grid', isSupplies ? window.supplyItems : window.storeItems, filter);
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+        });
+    });
+
+    // Form Listeners
+    document.getElementById('checkout-form')?.addEventListener('submit', handleCheckoutSubmit);
+    document.getElementById('review-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const { error } = await hankedClient.from('reviews').insert([{
+            customer_name: e.target.name.value,
+            rating: parseInt(e.target.rating.value),
+            feedback: e.target.feedback.value
+        }]);
+        if (!error) { showToast("Review posted!"); e.target.reset(); fetchReviews(); }
+    });
+
+    if (typeof emailjs !== "undefined" && !HANKED_CONFIG.emailjsPublicKey.startsWith("YOUR_")) {
+        emailjs.init(HANKED_CONFIG.emailjsPublicKey);
+    }
+});
+
+/* ---------- 9. UTILITIES ---------- */
+function formatPKR(n) { return "Rs. " + (n || 0).toLocaleString(); }
+
+function showToast(msg) {
+    let t = document.getElementById('toast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'toast';
+        document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function initNav() {
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+        nav?.classList.toggle('scrolled', window.scrollY > 30);
+    });
+    document.querySelector('.nav-toggle')?.addEventListener('click', () => {
+        document.querySelector('.nav-links')?.classList.toggle('open');
+    });
+}
+
+function initScrollReveal() {
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// Global Policy Controls
+window.openPolicy = (type) => {
+    const content = document.getElementById('policy-text');
+    const policies = {
+        shipping: `<h2>Shipping Policy 🚚</h2><p>Karachi: Rs. 200. Others: Rs. 350. Delivery in 3-5 days.</p>`,
+        maker: `<h2>Maker Policy 🧶</h2><p>Small items: 1 day. Large items: 3-5 days. Handmade with love.</p>`
+    };
+    if(content) content.innerHTML = policies[type];
+    document.getElementById('policy-modal')?.classList.add('open');
+};
+window.closePolicy = () => document.getElementById('policy-modal')?.classList.remove('open');
