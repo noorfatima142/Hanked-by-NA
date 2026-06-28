@@ -142,16 +142,21 @@ button{font-family:var(--font-body);cursor:pointer;border:none;background:none;}
 
 @media (max-width:880px){
   .nav-links{
-    position:fixed; top:0; right:0; height:100vh; width:70%; max-width:320px;
-    background:var(--gradient); flex-direction:column; justify-content:center; gap:28px;
+    position:fixed; top:0; right:0; height:100vh; 
+    width:100%; /* Changed to 100% so it covers the whole screen */
+    background: #e3f2fd !important; /* This is the slight blue color */
+    flex-direction:column; justify-content:center; gap:28px;
     transform:translateX(100%); transition:transform .4s ease; z-index:99;
   }
   .nav-links.open{transform:translateX(0);}
-  .nav-links a{color:var(--cream); font-size:1.1rem;}
-  .nav-links a::after{background:var(--gold);}
-  .nav-toggle{display:block;}
+  
+  /* Change link colors to dark navy so they are visible on the blue background */
+  .nav-links a {
+    color: #2D3A47 !important; 
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
 }
-
 /* ===== Hero ===== */
 .hero {
   position: relative;
@@ -1225,4 +1230,38 @@ footer {
     margin: 15px 0 5px 0;
     color: #4a4a4a;
     text-transform: uppercase;
+}
+/* --- MOBILE GRID OVERRIDE --- */
+@media (max-width: 600px) {
+  /* Force the grid into 2 columns */
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important; /* Tighter gap for small screens */
+    padding: 10px !important;
+  }
+
+  /* Adjust card padding so content fits in smaller boxes */
+  .card-body {
+    padding: 12px !important;
+  }
+
+  .card-body h3 {
+    font-size: 0.9rem !important; /* Smaller title */
+    line-height: 1.2;
+  }
+
+  .price {
+    font-size: 0.9rem !important;
+  }
+
+  .add-btn {
+    padding: 6px 12px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  /* Ensure the image doesn't get cut off */
+  .card-img {
+    aspect-ratio: 1/1;
+    padding: 10px;
+  }
 }
