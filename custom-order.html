@@ -43,17 +43,15 @@
 </header>
 
 <div class="chain-divider" data-links="20"></div>
-<form action="https://formbold.com/s/ozyjY" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+ <form id="custom-order-form" action="https://formbold.com/s/ozyjY" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
     
     <p class="label" style="margin-bottom: 5px; font-weight: 600;">REFERENCE PICTURE (REQUIRED) *</p>
     
-    <!-- We use a LABEL here. Clicking anywhere inside it triggers the file input -->
     <label style="display: block; border: 2px dashed #a67c7c; padding: 25px; text-align: center; background: #fafafa; border-radius: 12px; cursor: pointer; position: relative;">
         <img src="assets/paperclip-icon.png" alt="clip" style="width: 25px; opacity: 0.5; margin-bottom: 10px;">
         <p id="file-name-display" style="font-size: 14px; color: #666; margin: 0;">Click to upload reference photo</p>
         
-        <!-- We make the input invisible (opacity: 0) instead of display:none. 
-             This fixes the 'not focusable' error while keeping it hidden. -->
+        <!-- name MUST be "file" and MUST be inside the form -->
         <input type="file" id="file-input" name="file" accept="image/*" required 
                style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;" 
                onchange="showFileName()">
@@ -68,16 +66,16 @@
     <p class="label" style="margin-bottom: 5px; font-weight: 600;">PHONE NUMBER (WHATSAPP) *</p>
     <input type="tel" name="phone" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
 
-    <button type="submit" style="margin-top: 10px; width: 100%; background-color: #a67c7c; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">
+    <button type="submit" id="submit-btn" style="margin-top: 10px; width: 100%; background-color: #a67c7c; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">
         SUBMIT REQUEST
     </button>
 </form>
-    <!-- This message is hidden at first -->
-      <div id="thank-you-message" style="display:none; text-align:center; padding: 40px; background: #fff; border-radius: 15px;">
-        <h2 style="color: #a67c7c;">Order Received! 🧶</h2>
-        <p>Thank you for trusting HANKED. We will contact you on WhatsApp shortly for pricing and timelines!</p>
-        <button onclick="location.reload()" style="background: none; border: 1px solid #a67c7c; color: #a67c7c; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Send another request</button>
-    </div>
+
+<!-- This MUST be on your page for the script below to work -->
+<div id="thank-you-message" style="display:none; text-align:center; padding: 40px; background: #fff; border-radius: 15px;">
+    <h2 style="color: #a67c7c;">Order Received! 🧶</h2>
+    <p>We will contact you on WhatsApp shortly!</p>
+    <button onclick="location.reload()" style="background: none; border: 1px solid #a67c7c; color: #a67c7c; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Send another request</button>
 </div>
 <!-- FOOTER -->
 <footer class="main-footer">
