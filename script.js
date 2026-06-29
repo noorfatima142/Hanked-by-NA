@@ -732,5 +732,5 @@ function displayCheckoutItems() {
     
     // Update the bottom totals
     document.getElementById('summary-subtotal').innerText = `Rs. ${subtotal}`;
-    document.getElementById('summary-total').innerText = `Rs. ${subtotal + 200}`;
+    document.getElementById('summary-total').innerText = `Rs. ${totalE1}`;
 }
