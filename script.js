@@ -616,6 +616,16 @@ function openPolicy(type) {
             </ul>
             <p><em>Note: Timelines may vary during busy holiday seasons.</em></p>
         `;
+    } else if (type === 'payment-policy') {
+        content.innerHTML = `
+           <h2>Payment Policy 💸</h2>
+            <p>To keep things personal and secure, we handle all payments manually via WhatsApp!</p>
+            <ul>
+              <li><strong>Order Confirmation:</strong> Once you click 'Place Order', we will reach out via WhatsApp to confirm stock and your details.</li>
+              <li><strong>Payment Methods:</strong> We currently accept Bank Transfers, Easypaisa, and JazzCash.</li>
+            </ul>
+            <p><em>Thank you for supporting our craft!</em></p>
+        `;
     }
     
     modal.classList.add('open');
