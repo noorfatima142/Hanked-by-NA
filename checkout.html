@@ -50,18 +50,41 @@
         </form>
     </div>
 
-    <!-- RIGHT SIDE: BAG SUMMARY -->
-    <div class="checkout-summary-section">
-        <h2>Your Bag</h2>
-        <div id="checkout-items-list">
-            <!-- Items from Cart show here -->
-            <p style="text-align:center; padding: 20px;">Loading your bag... 🧶</p>
+    <div class="order-summary-card">
+    <h3>Order Summary</h3>
+    
+    <!-- Item List -->
+    <div id="checkout-items-list">
+        <!-- JS will populate this, but the style is handled below -->
+    </div>
+
+    <hr class="summary-divider">
+
+    <!-- Promo Code Section -->
+    <div class="promo-section">
+        <input type="text" id="promo-input" placeholder="Promo Code">
+        <button onclick="applyPromoCode()" id="promo-btn">Apply</button>
+    </div>
+    <p id="promo-message"></p>
+
+    <!-- Pricing Rows -->
+    <div class="summary-rows">
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="summary-subtotal">Rs. 0</span>
         </div>
-        <div class="checkout-total">
-            <div class="total-row"><span>Subtotal</span><span id="summary-subtotal">Rs. 0</span></div>
-    <!-- SHIPPING ROW -->
-            <div class="total-row"><span>Shipping</span><span id="summary-shipping">Rs. 0</span></div>
-            <div class="total-row grand"><span>Total</span><span id="summary-total">Rs. 0</span></div>
+        <div class="summary-row">
+            <span>Shipping</span>
+            <span id="summary-shipping">Rs. 200</span>
+        </div>
+        <div class="summary-row discount-row" id="discount-container" style="display: none;">
+            <span>Discount</span>
+            <span id="summary-discount">-Rs. 0</span>
+        </div>
+        <hr class="summary-divider">
+        <div class="summary-row total-row">
+            <span>Total</span>
+            <span id="summary-total">Rs. 0</span>
         </div>
     </div>
 </div>
