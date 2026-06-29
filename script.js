@@ -68,7 +68,6 @@ function productCardHTML(p) {
           <div class="card-body">
               <span class="cat">${p.category || 'Handmade'}</span>
               <h3>${p.name}</h3>
-              <p class="desc">${p.description}</p>
               <div class="card-foot">
                   <span class="price">Rs. ${p.price}</span>
                   <button class="add-btn" onclick="event.stopPropagation(); Cart.add(${p.id})">
@@ -219,7 +218,6 @@ window.openProductModal = function(id) {
     document.getElementById('modal-cat').textContent = product.category || 'Handmade';
     document.getElementById('modal-price').textContent = "Rs. " + product.price;
     document.getElementById('modal-desc').textContent = product.description;
-    document.getElementById('modal-qty').value = 1;
 
     document.getElementById('modal-add-btn').onclick = () => {
         const qty = parseInt(document.getElementById('modal-qty').value);
