@@ -49,45 +49,32 @@
             <button type="submit" class="place-order-btn" id="submit-btn">PLACE ORDER</button>
         </form>
     </div>
-
     <div class="order-summary-card">
-    <h3>Order Summary</h3>
+    <h3 class="summary-title">Order Summary</h3>
     
     <!-- Item List -->
-    <div id="checkout-items-list">
-        <!-- JS will populate this, but the style is handled below -->
+    <div id="checkout-items-list" class="summary-items-container">
+        <!-- JS will inject items here -->
     </div>
 
-    <hr class="summary-divider">
-
-    <!-- Promo Code Section -->
-    <div class="promo-section">
-        <input type="text" id="promo-input" placeholder="Promo Code">
-        <button onclick="applyPromoCode()" id="promo-btn">Apply</button>
-    </div>
-    <p id="promo-message"></p>
-
-    <!-- Pricing Rows -->
-    <div class="summary-rows">
-        <div class="summary-row">
-            <span>Subtotal</span>
-            <span id="summary-subtotal">Rs. 0</span>
+    <div class="summary-calculations">
+        <div class="summary-line">
+            <span class="label">Subtotal</span>
+            <span class="value" id="summary-subtotal">Rs. 0</span>
         </div>
-        <div class="summary-row">
-            <span>Shipping</span>
-            <span id="summary-shipping">Rs. 200</span>
+        <div class="summary-line">
+            <span class="label">Shipping</span>
+            <span class="value" id="summary-shipping">Rs. 200</span>
         </div>
-        <div class="summary-row discount-row" id="discount-container" style="display: none;">
-            <span>Discount</span>
-            <span id="summary-discount">-Rs. 0</span>
-        </div>
-        <hr class="summary-divider">
-        <div class="summary-row total-row">
-            <span>Total</span>
-            <span id="summary-total">Rs. 0</span>
+        
+        <div class="summary-divider"></div>
+        
+        <div class="summary-line total-line">
+            <span class="label">Total</span>
+            <span class="value" id="summary-total">Rs. 0</span>
         </div>
     </div>
-</div>
+</div>  
 
 <!-- SUCCESS MESSAGE (Hidden by default) -->
 <div id="success-screen" class="success-overlay" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:9999; justify-content:center; align-items:center; text-align:center;">
