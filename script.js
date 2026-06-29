@@ -709,3 +709,28 @@ function showFileName() {
         display.style.color = "#a67c7c";
     }
 }
+function displayCheckoutItems() {
+    const listContainer = document.getElementById('checkout-items-list');
+    let itemsHTML = '';
+
+    cart.forEach(item => {
+        itemsHTML += `
+            <div class="summary-item-row">
+                <div class="item-details">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="item-info-text">
+                        <h4>${item.name}</h4>
+                        <p>Qty: ${item.quantity}</p>
+                    </div>
+                </div>
+                <span class="value">Rs. ${item.price * item.quantity}</span>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = itemsHTML;
+    
+    // Update the bottom totals
+    document.getElementById('summary-subtotal').innerText = `Rs. ${subtotal}`;
+    document.getElementById('summary-total').innerText = `Rs. ${subtotal + 200}`;
+}
