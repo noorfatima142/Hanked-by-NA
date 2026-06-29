@@ -139,6 +139,7 @@ button{font-family:var(--font-body);cursor:pointer;border:none;background:none;}
   display:flex; align-items:center; justify-content:center;
 }
 .nav-toggle{display:none; font-size:1.6rem; background:none; color:var(--plum-deep);}
+
 @media (max-width: 880px) {
   .nav-links {
     position: fixed;
