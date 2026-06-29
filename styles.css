@@ -1312,3 +1312,30 @@ footer {
     padding: 10px;
   }
 }
+.payment-notice {
+    background: #FFF7E6; /* Your Vanilla color */
+    border-left: 4px solid #B46A72; /* Rosewood accent line */
+    padding: 15px 20px;
+    margin: 25px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(180, 106, 114, 0.1);
+    text-align: left;
+}
+
+.payment-notice p {
+    font-size: 0.9rem;
+    color: #4D0E13; /* Midnight */
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.payment-notice .sub-notice {
+    font-size: 0.8rem;
+    font-style: italic;
+    opacity: 0.8;
+    margin-bottom: 0;
+}
+
+.payment-notice strong {
+    color: #B46A72; /* Rosewood */
+}
