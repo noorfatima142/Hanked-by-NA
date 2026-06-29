@@ -217,7 +217,7 @@ window.openProductModal = function(id) {
     document.getElementById('modal-name').textContent = product.name;
     document.getElementById('modal-cat').textContent = product.category || 'Handmade';
     document.getElementById('modal-price').textContent = "Rs. " + product.price;
-    document.getElementById('modal-desc').textContent = 'Description: ' ||product.description;
+    document.getElementById('modal-desc').textContent = product.description;
 
     document.getElementById('modal-add-btn').onclick = () => {
         const qty = parseInt(document.getElementById('modal-qty').value);
