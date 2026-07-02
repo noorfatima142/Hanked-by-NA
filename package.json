@@ -1,0 +1,23 @@
+{
+  "name": "primary",
+  "version": "1.0.0",
+  "description": "Hanked-by-NA So we have made a website for our small Business HANKED BY NA  > Turning strings into stories, one loop at a time.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noorfatima142/Hanked-by-NA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noorfatima142/Hanked-by-NA/issues"
+  },
+  "homepage": "https://github.com/noorfatima142/Hanked-by-NA#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
